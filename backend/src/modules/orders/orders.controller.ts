@@ -26,7 +26,7 @@ export const getMyOrders = async (req: AuthRequest, res: Response) => {
 // GET /api/orders/:id
 export const getOrderById = async (req: AuthRequest, res: Response) => {
   try {
-    const order = await ordersService.getOrderById(req.params.id, req.user!.id);
+    const order = await ordersService.getOrderById(req.params['id'] as string, req.user!.id);
     res.json(order);
   } catch (err: any) {
     res.status(err.status || 500).json({ message: err.message });
@@ -36,7 +36,7 @@ export const getOrderById = async (req: AuthRequest, res: Response) => {
 // PUT /api/orders/:id/cancel
 export const cancelOrder = async (req: AuthRequest, res: Response) => {
   try {
-    const result = await ordersService.cancelOrder(req.params.id, req.user!.id);
+    const result = await ordersService.cancelOrder(req.params['id'] as string, req.user!.id);
     res.json(result);
   } catch (err: any) {
     res.status(err.status || 500).json({ message: err.message });
@@ -57,7 +57,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 // PUT /api/orders/:id/status (Admin)
 export const updateOrderStatus = async (req: Request, res: Response) => {
   try {
-    const result = await ordersService.updateOrderStatus(req.params.id, req.body.status);
+    const result = await ordersService.updateOrderStatus(req.params['id'] as string, req.body.status);
     res.json(result);
   } catch (err: any) {
     res.status(err.status || 500).json({ message: err.message });

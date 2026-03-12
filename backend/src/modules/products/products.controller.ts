@@ -30,7 +30,7 @@ export const getCategories = async (req: Request, res: Response) => {
 // GET /api/products/:id
 export const getProductById = async (req: Request, res: Response) => {
   try {
-    const product = await productsService.getProductById(req.params.id);
+    const product = await productsService.getProductById(req.params['id'] as string);
     res.json(product);
   } catch (err: any) {
     res.status(err.status || 500).json({ message: err.message });
@@ -50,7 +50,7 @@ export const createProduct = async (req: Request, res: Response) => {
 // PUT /api/products/:id (Admin)
 export const updateProduct = async (req: Request, res: Response) => {
   try {
-    const product = await productsService.updateProduct(req.params.id, req.body);
+    const product = await productsService.updateProduct(req.params['id'] as string, req.body);
     res.json(product);
   } catch (err: any) {
     res.status(err.status || 500).json({ message: err.message });
@@ -60,7 +60,7 @@ export const updateProduct = async (req: Request, res: Response) => {
 // DELETE /api/products/:id (Admin)
 export const deleteProduct = async (req: Request, res: Response) => {
   try {
-    const result = await productsService.deleteProduct(req.params.id);
+    const result = await productsService.deleteProduct(req.params['id'] as string);
     res.json(result);
   } catch (err: any) {
     res.status(err.status || 500).json({ message: err.message });
