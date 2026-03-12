@@ -1,0 +1,120 @@
+<div class="dashboard">
+  <div class="page-header">
+    <h1>Dashboard</h1>
+    <p>Tổng quan hệ thống bán hàng</p>
+  </div>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
+  @if (!loading()) {
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <mat-card class="stat-card revenue">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>attach_money</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Tổng doanh thu</p>
+            <h2 class="stat-value">{{ stats().totalRevenue | number:'1.0-0' }}đ</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card orders">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>receipt_long</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Tổng đơn hàng</p>
+            <h2 class="stat-value">{{ stats().totalOrders }}</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card products">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>inventory_2</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Tổng sản phẩm</p>
+            <h2 class="stat-value">{{ stats().totalProducts }}</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card pending">
+        <mat-card-content>
+          <div class="stat-icon">
+            <mat-icon>pending_actions</mat-icon>
+          </div>
+          <div class="stat-info">
+            <p class="stat-label">Chờ xử lý</p>
+            <h2 class="stat-value">{{ stats().pendingOrders }}</h2>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h3>Thao tác nhanh</h3>
+      <div class="actions-grid">
+        <a mat-raised-button color="primary" routerLink="/admin/products">
+          <mat-icon>add_box</mat-icon>
+          Thêm sản phẩm
+        </a>
+        <a mat-stroked-button routerLink="/admin/orders">
+          <mat-icon>list_alt</mat-icon>
+          Xem đơn hàng
+        </a>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    <div class="recent-orders">
+      <div class="section-header">
+        <h3>Đơn hàng gần đây</h3>
+        <a mat-button routerLink="/admin/orders">Xem tất cả</a>
+      </div>
+
+      @if (recentOrders().length === 0) {
+        <div class="empty">
+          <mat-icon>inbox</mat-icon>
+          <p>Chưa có đơn hàng nào</p>
+        </div>
+      }
+
+      @if (recentOrders().length > 0) {
+        <div class="orders-table">
+          <div class="table-header">
+            <span>Mã đơn</span>
+            <span>Khách hàng</span>
+            <span>Tổng tiền</span>
+            <span>Trạng thái</span>
+            <span>Ngày đặt</span>
+          </div>
+          @for (order of recentOrders(); track order.id) {
+            <div class="table-row">
+              <span class="order-id">{{ order.id | slice:0:8 }}...</span>
+              <span>{{ order.shippingAddress?.fullName }}</span>
+              <span class="amount">{{ order.totalAmount | number:'1.0-0' }}đ</span>
+              <span>
+                <span class="status-badge" [class]="getStatusClass(order.status)">
+                  {{ getStatusLabel(order.status) }}
+                </span>
+              </span>
+              <span class="date">{{ order.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

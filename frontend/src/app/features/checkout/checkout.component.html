@@ -1,0 +1,167 @@
+<div class="checkout-page">
+
+  <!-- Đặt hàng thành công -->
+  @if (orderSuccess()) {
+  <div class="success-container">
+    <div class="success-card">
+      <div class="success-icon">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+      <h2>Đặt hàng thành công! 🎉</h2>
+      <p>Cảm ơn bạn đã mua hàng. Đơn hàng của bạn đang được xử lý.</p>
+      <p class="order-id">Mã đơn hàng: <strong>{{ orderId() | slice:0:8 }}...</strong></p>
+
+      <div class="success-actions">
+        <a mat-raised-button color="primary" routerLink="/orders">
+          <mat-icon>receipt_long</mat-icon>
+          Xem đơn hàng
+        </a>
+        <a mat-stroked-button routerLink="/">
+          <mat-icon>storefront</mat-icon>
+          Tiếp tục mua sắm
+        </a>
+      </div>
+    </div>
+  </div>
+  }
+
+  <!-- Form Checkout -->
+  @if (!orderSuccess()) {
+  <h1 class="page-title">
+    <mat-icon>payment</mat-icon>
+    Thanh toán
+  </h1>
+
+  <div class="checkout-content">
+
+    <!-- Form giao hàng -->
+    <div class="shipping-form">
+      <div class="form-card">
+        <h3>
+          <mat-icon>local_shipping</mat-icon>
+          Thông tin giao hàng
+        </h3>
+
+        <form [formGroup]="shippingForm">
+          <mat-form-field appearance="outline">
+            <mat-label>Họ và tên</mat-label>
+            <input matInput formControlName="fullName" placeholder="Nguyễn Văn A">
+            <mat-icon matSuffix>person</mat-icon>
+            @if (shippingForm.get('fullName')?.hasError('required') && shippingForm.get('fullName')?.touched) {
+            <mat-error>Vui lòng nhập họ tên</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Số điện thoại</mat-label>
+            <input matInput formControlName="phone" placeholder="0912345678">
+            <mat-icon matSuffix>phone</mat-icon>
+            @if (shippingForm.get('phone')?.hasError('required') && shippingForm.get('phone')?.touched) {
+            <mat-error>Vui lòng nhập số điện thoại</mat-error>
+            }
+            @if (shippingForm.get('phone')?.hasError('pattern')) {
+            <mat-error>Số điện thoại không hợp lệ</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Địa chỉ</mat-label>
+            <input matInput formControlName="address" placeholder="123 Đường ABC, Phường XYZ">
+            <mat-icon matSuffix>home</mat-icon>
+            @if (shippingForm.get('address')?.hasError('required') && shippingForm.get('address')?.touched) {
+            <mat-error>Vui lòng nhập địa chỉ</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tỉnh / Thành phố</mat-label>
+            <input matInput formControlName="city" placeholder="Hà Nội">
+            <mat-icon matSuffix>location_city</mat-icon>
+            @if (shippingForm.get('city')?.hasError('required') && shippingForm.get('city')?.touched) {
+            <mat-error>Vui lòng nhập tỉnh/thành phố</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Ghi chú (không bắt buộc)</mat-label>
+            <textarea matInput formControlName="note" rows="3" placeholder="Ghi chú thêm cho đơn hàng..."></textarea>
+            <mat-icon matSuffix>note</mat-icon>
+          </mat-form-field>
+        </form>
+      </div>
+    </div>
+
+    <!-- Tóm tắt đơn hàng -->
+    <div class="order-summary">
+      <div class="summary-card">
+        <h3>
+          <mat-icon>receipt</mat-icon>
+          Đơn hàng của bạn
+        </h3>
+
+        <!-- Danh sách sản phẩm -->
+        <div class="order-items">
+          @for (item of cartService.cartItems(); track item.productId) {
+          <div class="order-item">
+            <img [src]="item.imageUrl" [alt]="item.name" onerror="this.src='https://picsum.photos/60/60'">
+            <div class="item-info">
+              <p class="item-name">{{ item.name }}</p>
+              <p class="item-qty">x{{ item.quantity }}</p>
+            </div>
+            <p class="item-price">{{ item.price * item.quantity | number:'1.0-0' }}đ</p>
+          </div>
+          }
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Tổng -->
+        <div class="summary-rows">
+          <div class="summary-row">
+            <span>Tạm tính</span>
+            <span>{{ cartService.totalPrice() | number:'1.0-0' }}đ</span>
+          </div>
+          <div class="summary-row">
+            <span>Phí vận chuyển</span>
+            <span class="free">Miễn phí</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="total-row">
+          <span>Tổng cộng</span>
+          <span class="total-price">{{ cartService.totalPrice() | number:'1.0-0' }}đ</span>
+        </div>
+
+        <!-- Nút đặt hàng -->
+        <button mat-raised-button color="primary" class="order-btn" [disabled]="loading()" (click)="onSubmit()">
+          @if (loading()) {
+          <ng-container>
+            <mat-spinner diameter="20"></mat-spinner>
+            Đang xử lý...
+          </ng-container>
+          } @else {
+          <ng-container>
+            <mat-icon>check_circle</mat-icon>
+            Đặt hàng ngay
+          </ng-container>
+          }
+        </button>
+
+        <a mat-button routerLink="/cart" class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+          Quay lại giỏ hàng
+        </a>
+
+        <div class="secure-badge">
+          <mat-icon>lock</mat-icon>
+          <span>Thanh toán an toàn & bảo mật</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  }
+
+</div>

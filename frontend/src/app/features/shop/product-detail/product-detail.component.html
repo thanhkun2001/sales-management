@@ -1,0 +1,111 @@
+<p>product-detail works!</p>
+<div class="product-detail-page">
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Đang tải sản phẩm...</p>
+    </div>
+  }
+
+  @if (!loading() && product()) {
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a routerLink="/">Trang chủ</a>
+      <mat-icon>chevron_right</mat-icon>
+      <a routerLink="/products">Sản phẩm</a>
+      <mat-icon>chevron_right</mat-icon>
+      <span>{{ product()!.name }}</span>
+    </div>
+
+    <div class="product-container">
+
+      <!-- Image -->
+      <div class="product-image-wrapper">
+        <img [src]="product()!.imageUrl"
+          [alt]="product()!.name"
+          class="product-image"
+          onerror="this.src='https://picsum.photos/600/400'">
+
+        <!-- Badge hết hàng -->
+        @if (product()!.stock === 0) {
+          <div class="out-of-stock-badge">Hết hàng</div>
+        }
+      </div>
+
+      <!-- Info -->
+      <div class="product-info">
+
+        <!-- Category -->
+        <mat-chip-set>
+          <mat-chip color="primary">{{ product()!.category }}</mat-chip>
+        </mat-chip-set>
+
+        <!-- Name -->
+        <h1 class="product-name">{{ product()!.name }}</h1>
+
+        <!-- Price -->
+        <p class="product-price">{{ product()!.price | number:'1.0-0' }}đ</p>
+
+        <mat-divider></mat-divider>
+
+        <!-- Description -->
+        <div class="product-desc">
+          <h3>Mô tả sản phẩm</h3>
+          <p>{{ product()!.description }}</p>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Stock -->
+        <div class="stock-info">
+          <mat-icon [class.in-stock]="product()!.stock > 0"
+            [class.no-stock]="product()!.stock === 0">
+            {{ product()!.stock > 0 ? 'check_circle' : 'cancel' }}
+          </mat-icon>
+          <span [class.in-stock]="product()!.stock > 0"
+            [class.no-stock]="product()!.stock === 0">
+            {{ product()!.stock > 0 ? 'Còn ' + product()!.stock + ' sản phẩm' : 'Hết hàng' }}
+          </span>
+        </div>
+
+        <!-- Quantity Selector -->
+        @if (product()!.stock > 0) {
+          <div class="quantity-selector">
+            <span class="qty-label">Số lượng:</span>
+            <div class="qty-controls">
+              <button mat-icon-button (click)="decreaseQty()"
+                [disabled]="quantity() <= 1">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty-value">{{ quantity() }}</span>
+              <button mat-icon-button (click)="increaseQty()"
+                [disabled]="quantity() >= product()!.stock">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Actions -->
+        <div class="actions">
+          <button mat-raised-button color="primary"
+            class="add-cart-btn"
+            [disabled]="product()!.stock === 0"
+            (click)="onAddToCart()">
+            <mat-icon>add_shopping_cart</mat-icon>
+            Thêm vào giỏ hàng
+          </button>
+
+          <a mat-stroked-button routerLink="/products">
+            <mat-icon>arrow_back</mat-icon>
+            Tiếp tục mua sắm
+          </a>
+        </div>
+
+      </div>
+    </div>
+  }
+
+</div>

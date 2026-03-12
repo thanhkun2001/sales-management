@@ -1,0 +1,58 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Đăng nhập</h2>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+      <!-- Email -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" placeholder="example@gmail.com">
+        <mat-icon matSuffix>email</mat-icon>
+        @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+          <mat-error>Email không được để trống</mat-error>
+        }
+        @if (form.get('email')?.hasError('email')) {
+          <mat-error>Email không hợp lệ</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Password -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mật khẩu</mat-label>
+        <input matInput formControlName="password"
+          [type]="showPassword() ? 'text' : 'password'">
+        <button mat-icon-button matSuffix type="button"
+          (click)="showPassword.set(!showPassword())">
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+          <mat-error>Mật khẩu không được để trống</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Error message -->
+      @if (errorMsg()) {
+        <p class="error-msg">{{ errorMsg() }}</p>
+      }
+
+      <!-- Submit -->
+      <button mat-raised-button color="primary"
+        class="full-width submit-btn"
+        type="submit"
+        [disabled]="loading()">
+        @if (loading()) {
+          <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+          Đăng nhập
+        }
+      </button>
+
+    </form>
+
+    <p class="redirect">
+      Chưa có tài khoản?
+      <a routerLink="/register">Đăng ký ngay</a>
+    </p>
+  </div>
+</div>

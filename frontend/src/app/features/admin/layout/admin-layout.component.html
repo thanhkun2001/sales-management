@@ -1,0 +1,46 @@
+<div class="admin-wrapper">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <mat-icon>admin_panel_settings</mat-icon>
+      <span>Admin Panel</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      @for (item of menuItems; track item.path) {
+        <a [routerLink]="item.path"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.path === '/admin' }"
+          class="nav-item">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <mat-icon>account_circle</mat-icon>
+        <div>
+          <p class="user-name">{{ authService.user()?.name }}</p>
+          <p class="user-role">Administrator</p>
+        </div>
+      </div>
+      <div class="sidebar-actions">
+        <a mat-button routerLink="/" class="shop-link">
+          <mat-icon>storefront</mat-icon>
+          Xem Shop
+        </a>
+        <button mat-button color="warn" (click)="onLogout()">
+          <mat-icon>logout</mat-icon>
+          Đăng xuất
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

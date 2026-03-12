@@ -1,0 +1,133 @@
+<div class="cart-page">
+  <div class="cart-header">
+    <h1>
+      <mat-icon>shopping_cart</mat-icon>
+      Giỏ hàng của bạn
+    </h1>
+    <span class="item-count">{{ cartService.totalItems() }} sản phẩm</span>
+  </div>
+
+  <!-- Giỏ hàng trống -->
+  @if (cartService.cartItems().length === 0) {
+    <div class="empty-cart">
+      <mat-icon>remove_shopping_cart</mat-icon>
+      <h3>Giỏ hàng trống</h3>
+      <p>Hãy thêm sản phẩm vào giỏ hàng của bạn</p>
+      <a mat-raised-button color="primary" routerLink="/products">
+        <mat-icon>storefront</mat-icon>
+        Tiếp tục mua sắm
+      </a>
+    </div>
+  }
+
+  <!-- Có sản phẩm -->
+  @if (cartService.cartItems().length > 0) {
+    <div class="cart-content">
+
+      <!-- Danh sách sản phẩm -->
+      <div class="cart-items">
+
+        <!-- Header -->
+        <div class="cart-items-header">
+          <span>Sản phẩm</span>
+          <span>Đơn giá</span>
+          <span>Số lượng</span>
+          <span>Thành tiền</span>
+          <span></span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Items -->
+        @for (item of cartService.cartItems(); track item.productId) {
+          <div class="cart-item">
+            <!-- Image + Name -->
+            <div class="item-info">
+              <img [src]="item.imageUrl" [alt]="item.name"
+                onerror="this.src='https://picsum.photos/80/80'">
+              <div class="item-details">
+                <p class="item-name">{{ item.name }}</p>
+              </div>
+            </div>
+
+            <!-- Đơn giá -->
+            <p class="item-price">{{ item.price | number:'1.0-0' }}đ</p>
+
+            <!-- Số lượng -->
+            <div class="qty-controls">
+              <button mat-icon-button (click)="onDecrease(item)"
+                [disabled]="item.quantity <= 1">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty-value">{{ item.quantity }}</span>
+              <button mat-icon-button (click)="onIncrease(item)">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+
+            <!-- Thành tiền -->
+            <p class="item-total">
+              {{ item.price * item.quantity | number:'1.0-0' }}đ
+            </p>
+
+            <!-- Xóa -->
+            <button mat-icon-button color="warn" (click)="onRemove(item)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+
+          <mat-divider></mat-divider>
+        }
+
+        <!-- Xóa tất cả -->
+        <div class="cart-actions">
+          <a mat-button routerLink="/products">
+            <mat-icon>arrow_back</mat-icon>
+            Tiếp tục mua sắm
+          </a>
+          <button mat-stroked-button color="warn" (click)="onClearCart()">
+            <mat-icon>delete_sweep</mat-icon>
+            Xóa tất cả
+          </button>
+        </div>
+      </div>
+
+      <!-- Tổng tiền -->
+      <div class="cart-summary">
+        <h3>Tóm tắt đơn hàng</h3>
+
+        <div class="summary-row">
+          <span>Tạm tính ({{ cartService.totalItems() }} sản phẩm)</span>
+          <span>{{ cartService.totalPrice() | number:'1.0-0' }}đ</span>
+        </div>
+
+        <div class="summary-row">
+          <span>Phí vận chuyển</span>
+          <span class="free-ship">Miễn phí</span>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="summary-total">
+          <span>Tổng cộng</span>
+          <span class="total-price">
+            {{ cartService.totalPrice() | number:'1.0-0' }}đ
+          </span>
+        </div>
+
+        <a mat-raised-button color="primary"
+          class="checkout-btn"
+          routerLink="/checkout">
+          <mat-icon>payment</mat-icon>
+          Tiến hành thanh toán
+        </a>
+
+        <div class="secure-badge">
+          <mat-icon>lock</mat-icon>
+          <span>Thanh toán an toàn & bảo mật</span>
+        </div>
+      </div>
+
+    </div>
+  }
+</div>

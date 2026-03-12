@@ -1,0 +1,74 @@
+<div class="orders-page">
+  <h1>
+    <mat-icon>receipt_long</mat-icon>
+    Đơn hàng của tôi
+  </h1>
+
+  @if (loading()) {
+    <div class="loading">
+      <mat-spinner diameter="48"></mat-spinner>
+    </div>
+  }
+
+  @if (!loading() && orders().length === 0) {
+    <div class="empty">
+      <mat-icon>inbox</mat-icon>
+      <h3>Chưa có đơn hàng nào</h3>
+      <a mat-raised-button color="primary" routerLink="/">Mua sắm ngay</a>
+    </div>
+  }
+
+  @if (!loading()) {
+    @for (order of orders(); track order.id) {
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <p class="order-id">Mã đơn: {{ order.id | slice:0:8 }}...</p>
+            <p class="order-date">{{ order.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          </div>
+          <mat-chip [color]="getStatusColor(order.status)" highlighted>
+            {{ getStatusLabel(order.status) }}
+          </mat-chip>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="order-items">
+          @for (item of order.items; track item.productId) {
+            <div class="order-item">
+              <img [src]="item.imageUrl" [alt]="item.name"
+                onerror="this.src='https://picsum.photos/60/60'">
+              <div class="item-info">
+                <p class="item-name">{{ item.name }}</p>
+                <p class="item-qty">x{{ item.quantity }}</p>
+              </div>
+              <p class="item-price">{{ item.price * item.quantity | number:'1.0-0' }}đ</p>
+            </div>
+          }
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="order-footer">
+          <div class="shipping-info">
+            <mat-icon>location_on</mat-icon>
+            <span>{{ order.shippingAddress.fullName }} — {{ order.shippingAddress.address }}, {{ order.shippingAddress.city }}</span>
+          </div>
+          <div class="order-total">
+            <span>Tổng tiền:</span>
+            <span class="total-price">{{ order.totalAmount | number:'1.0-0' }}đ</span>
+          </div>
+        </div>
+
+        @if (order.status === 'pending') {
+          <div class="order-actions">
+            <button mat-stroked-button color="warn" (click)="cancelOrder(order.id)">
+              <mat-icon>cancel</mat-icon>
+              Hủy đơn hàng
+            </button>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

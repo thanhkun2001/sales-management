@@ -1,0 +1,80 @@
+<div class="product-list-page">
+
+  <!-- Hero Banner -->
+  <div class="hero">
+    <h1>🛍️ Cửa hàng của chúng tôi</h1>
+    <p>Khám phá hàng ngàn sản phẩm chất lượng cao</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <!-- Search -->
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Tìm kiếm sản phẩm</mat-label>
+      <input matInput [formControl]="searchControl" placeholder="Nhập tên sản phẩm...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <!-- Category -->
+    <mat-form-field appearance="outline" class="category-field">
+      <mat-label>Danh mục</mat-label>
+      <mat-select [formControl]="categoryControl">
+        <mat-option value="">Tất cả</mat-option>
+        @for (cat of categories(); track cat) {
+          <mat-option [value]="cat">{{ cat }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Clear -->
+    @if (searchControl.value || categoryControl.value) {
+      <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>clear</mat-icon>
+        Xóa bộ lọc
+      </button>
+    }
+  </div>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Đang tải sản phẩm...</p>
+    </div>
+  }
+
+  <!-- Products Grid -->
+  @if (!loading()) {
+    @if (products().length > 0) {
+      <div class="products-grid">
+        @for (product of products(); track product.id) {
+          <app-product-card
+            [product]="product"
+            (addToCart)="onAddToCart($event)">
+          </app-product-card>
+        }
+      </div>
+
+      <!-- Paginator -->
+      <mat-paginator
+        [length]="total()"
+        [pageSize]="limit"
+        [pageIndex]="page()"
+        [pageSizeOptions]="[12, 24, 48]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+
+    } @else {
+      <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h3>Không tìm thấy sản phẩm</h3>
+        <p>Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+        <button mat-raised-button color="primary" (click)="clearFilters()">
+          Xem tất cả sản phẩm
+        </button>
+      </div>
+    }
+  }
+
+</div>
