@@ -1,13 +1,6 @@
-FROM node:20-alpine
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "backend/Dockerfile"
 
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["node", "dist/index.js"]
+[deploy]
+startCommand = "node dist/index.js"
