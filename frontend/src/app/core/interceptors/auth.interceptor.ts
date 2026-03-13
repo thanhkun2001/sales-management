@@ -15,7 +15,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError(err => {
       // Nếu token hết hạn → thử refresh
-      if (err.status === 401) {
+      if (err.status === 401 && !req.url.includes('/auth/login') &&
+        !req.url.includes('/auth/register') &&
+        !req.url.includes('/auth/refresh')) {
         return authService.refreshToken().pipe(
           switchMap(res => {
             const retryReq = req.clone({
