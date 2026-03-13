@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 import { CreateOrderDto, Order } from '../models/order.model';
-import { environment } from '../../../environments/environment.development';
 
 @Injectable({ providedIn: 'root' })
 export class OrderService {
